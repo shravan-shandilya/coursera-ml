@@ -27,3 +27,6 @@ octave-workspace
 
 token.mat
 # End of https://www.gitignore.io/api/matlab
+.DS_Store
+*\.DS_Store
+*/.DS_Store

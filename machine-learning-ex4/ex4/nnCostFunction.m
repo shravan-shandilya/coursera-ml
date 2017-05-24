@@ -72,14 +72,28 @@ a2 = [ones(size(z2,1),1) ,sigmoid(z2)];
 z3 = a2 * Theta2';
 a3 = sigmoid(z3);
 
-J = sum(sum(( -adjusted_y .* log(a3) - (1-adjusted_y) .* log(1-a3))))/m;
-%J = sum(sum((a3.*adjusted_y)))/m;
-temp1 = Theta1(:);
-temp2 = Theta2(:);
-temp1(1) = 0;
-temp2(1) = 0;
-reg = (lambda * ( sum(temp1 .^ 2) + sum(temp2 .^ 2))) / (2*m);
-% -------------------------------------------------------------
+temp1 = [zeros(size(Theta1,1),1) Theta1(:,2:end)];
+temp2 = [zeros(size(Theta2,1),1) Theta2(:,2:end)];
+
+
+penalty = sum(sum(temp1.^2, 2))+sum(sum(temp2.^2, 2));
+
+J = sum(sum(( -adjusted_y .* log(a3) - (1-adjusted_y) .* log(1-a3))))/m + (penalty*lambda)/(2*m);
+
+%error
+sigma3 = a3.-adjusted_y;
+sigma2 = (sigma3*Theta2).*sigmoidGradient([ones(size(z2, 1), 1) z2]);
+sigma2 = sigma2(:, 2:end);
+
+
+delta_1 = (sigma2'*a1);
+delta_2 = (sigma3'*a2);
+
+
+penalty1 = (lambda/m)*temp1;
+penalty2 = (lambda/m)*temp2;
+Theta1_grad = delta_1./m + penalty1;
+Theta2_grad = delta_2./m + penalty2;
 
 % =========================================================================
 
